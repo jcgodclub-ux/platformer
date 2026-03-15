@@ -1,0 +1,103 @@
+import pygame
+import sys
+
+pygame.init()
+
+width = 800
+height = 600
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Platformer")
+clock = pygame.time.Clock()
+
+font = pygame.font.Font("key.tft", 20)
+big_font = pygame.font.Font("key.tft", 20)
+
+GRAVITY = 9.8
+
+
+Level_width = 2200
+
+class Platform:
+    def __init__(self, x, y,w,h):
+        self.rect = pygame.Rect(x, y, w, h)
+
+    def draw(self, surf,camera_x = 0):
+        pygame.draw.rect(surf,(60,180,90), (self.rect - camera_x, self.rect - camera_x, self.rect.width, self.rect.height))
+
+class coin:
+
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 20, 20)
+
+    def draw(self, surf,camera_x = 0):
+        pygsme.draw.circle(surf,color(255,215,0),(self.rect.centerx - camera_x, self.rect.centery),10)
+
+
+class enemy:
+    def __init__(self, x, y, left_limit, right_limit):
+        self.rect = pygame.Rect(x, y)
+        self.speed = 4
+        self.dir = 1
+        self.left_limit = left_limit
+        self.right_limit = right_limit
+
+        self.lives = 3
+        self.invuilm = 0
+
+
+    def jump(self):
+        if self.on_ground:
+            self.vet_y = 14
+            self.on_ground = False
+
+    def hit(self):
+
+        if self.invuilm == 0:
+            self.lives -= 1
+            self.vet_y = -10
+            self.invuilm = 60
+
+    def update(self,platforms ):
+
+        key = pygame.key.get_pressed()\
+
+        dx = 0
+
+        if key[pygame.K_LEFT]:
+            dx = self.speed
+        if key[pygame.K_RIGHT]:
+            dx = self.speed
+
+        self.rect.x += dx
+
+
+        if self.rect.left < 0:
+            self.rect.left = 0
+
+
+        if self.rect.right > LEVEL_WIDTH:
+            self.rect.rect = LEVEL_WIDTH
+
+
+        self.vet_y += GRAVITY
+        self.rect.y += self.vet_y
+
+        self.on_ground = False
+
+        for platform in platforms:
+            if self.rect.colliderect(platform.rect) and self.vet_y > 0:
+
+                self.rect.bottom = p.rect.top
+                self.vet_y = 0
+                self.on_ground = True
+
+        if self.rect.top > HEIGHT:
+            self.invuilm -= 1
+
+    def draw(self,surf,camera_x = 0):
+
+        if self.invuilm > 0 and (self.invuilm % 10) < 5:
+            return
+
+        pygame.draw.rect(surf, (80,140,255), (self.rect.x - camera,self.rect.y, self.rect.w , self.rect.h))
+
